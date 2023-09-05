@@ -40,7 +40,8 @@ namespace ModularAvatarAsCode.V0
                     nameOrPrefix = param.name,
                     syncType = SyncType(param.valueType),
                     localOnly = !param.networkSynced,
-                    saved = param.saved
+                    saved = param.saved,
+                    defaultValue = param.defaultValue
                 });
             }
         }
@@ -179,17 +180,26 @@ namespace ModularAvatarAsCode.V0
         public MaacMenuItem EditMenuItem(GameObject receiver)
         {
             var menuItem = receiver.GetOrAddComponent<ModularAvatarMenuItem>();
-            return new MaacMenuItem(menuItem);
+            return new MaacMenuItem(new [] { menuItem });
+        }
+
+        public MaacMenuItem EditMenuItem(GameObject[] receivers)
+        {
+            var menuItems = receivers
+                // Warning: Mutating function inside LINQ
+                .Select(receiver => receiver.GetOrAddComponent<ModularAvatarMenuItem>())
+                .ToArray();
+            return new MaacMenuItem(menuItems);
         }
     }
 
     internal class MaacMenuItem
     {
-        private readonly ModularAvatarMenuItem menuItem;
+        private readonly ModularAvatarMenuItem[] menuItems;
 
-        public MaacMenuItem(ModularAvatarMenuItem menuItem)
+        public MaacMenuItem(ModularAvatarMenuItem[] menuItems)
         {
-            this.menuItem = menuItem;
+            this.menuItems = menuItems;
         }
 
         public MaacMenuItem Toggle(AacFlBoolParameter parameter)
@@ -308,8 +318,11 @@ namespace ModularAvatarAsCode.V0
         
         public MaacMenuItem Name(string menuItemName)
         {
-            menuItem.name = menuItemName;
-            menuItem.gameObject.name = menuItemName;
+            foreach (var menuItem in menuItems)
+            {
+                menuItem.name = menuItemName;
+                menuItem.gameObject.name = menuItemName;
+            }
             return this;
         }
 
@@ -342,19 +355,25 @@ namespace ModularAvatarAsCode.V0
 
         private void EditControlWithParameter(AacFlParameter parameterNullable, Func<VRCExpressionsMenu.Control, VRCExpressionsMenu.Control> func)
         {
-            var control = menuItem.Control;
-            var controlParameter = control.parameter ?? new VRCExpressionsMenu.Control.Parameter(); 
-            controlParameter.name = parameterNullable != null ? parameterNullable.Name : "";
-            control.parameter = controlParameter;
-            control = func(control);
-            menuItem.Control = control;
+            foreach (var menuItem in menuItems)
+            {
+                var control = menuItem.Control;
+                var controlParameter = control.parameter ?? new VRCExpressionsMenu.Control.Parameter(); 
+                controlParameter.name = parameterNullable != null ? parameterNullable.Name : "";
+                control.parameter = controlParameter;
+                control = func(control);
+                menuItem.Control = control;
+            }
         }
 
         private void EditControl(Func<VRCExpressionsMenu.Control, VRCExpressionsMenu.Control> func)
         {
-            VRCExpressionsMenu.Control control = menuItem.Control;
-            control = func(control);
-            menuItem.Control = control;
+            foreach (var menuItem in menuItems)
+            {
+                VRCExpressionsMenu.Control control = menuItem.Control;
+                control = func(control);
+                menuItem.Control = control;
+            }
         }
     }
 
