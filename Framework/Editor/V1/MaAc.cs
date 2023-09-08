@@ -23,10 +23,16 @@ namespace ModularAvatarAsCode.V1
             _root = root;
         }
 
-        public static MaAc ModularAvatarAsCode(GameObject root, bool setDirty = true)
+        public static MaAc Create(GameObject root, bool setDirty = true)
         {
             if (setDirty) EditorUtility.SetDirty(root);
             return new MaAc(root);
+        }
+
+        /// Create a new instance of MaAc targeting another object. Beware that this new instance of MaAc forgets all previous method invocations, so invoking some stateful functions like "NewMergeAnimator" may cause different results.
+        public MaAc On(GameObject otherRoot)
+        {
+            return new MaAc(otherRoot);
         }
 
         public void ImportParameters(VRCExpressionParameters parameters)
@@ -57,24 +63,26 @@ namespace ModularAvatarAsCode.V1
             }
         }
 
+        /// Declare a new Float parameter, by default saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist.
         public MaacParameter<float> NewParameter(AacFlFloatParameter aacParameter)
         {
             var parameter = CreateParameter(aacParameter.Name, ParameterSyncType.Float, out var index);
             return new MaacParameter<float>(parameter, new [] { index });
         }
-
+        /// Declare a new Int parameter, by default saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist.
         public MaacParameter<int> NewParameter(AacFlIntParameter aacParameter)
         {
             var parameter = CreateParameter(aacParameter.Name, ParameterSyncType.Int, out var index);
             return new MaacParameter<int>(parameter, new [] { index });
         }
-
+        /// Declare a new Bool parameter, by default saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist.
         public MaacParameter<bool> NewParameter(AacFlBoolParameter aacParameter)
         {
             var parameter = CreateParameter(aacParameter.Name, ParameterSyncType.Bool, out var index);
             return new MaacParameter<bool>(parameter, new [] { index });
         }
-
+        
+        /// Declare a new Bool parameter, acknowledging that the animator has exposed it as a Float. By default it is saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist.
         public MaacParameter<bool> NewBoolToFloatParameter(AacFlFloatParameter aacParameter)
         {
             var parameter = CreateParameter(aacParameter.Name, ParameterSyncType.Bool, out var index);
@@ -95,6 +103,7 @@ namespace ModularAvatarAsCode.V1
             return parameter;
         }
 
+        /// Declare a new animator to be merged. Every call to NewMergeAnimator will create a new ModularAvatarMergeAnimator, as long as this instance of MaAc is reused.
         public ModularAvatarMergeAnimator NewMergeAnimator(AacFlController controller, VRCAvatarDescriptor.AnimLayerType layerType)
         {
             return NewMergeAnimator(controller.AnimatorController, layerType);
