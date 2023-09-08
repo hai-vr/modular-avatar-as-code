@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AnimatorAsCode.V1;
@@ -10,9 +9,9 @@ using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 
-namespace ModularAvatarAsCode.V0
+namespace ModularAvatarAsCode.V1
 {
-    internal class MaAc
+    public class MaAc
     {
         private readonly GameObject _root;
         private bool paramsCreated;
@@ -143,7 +142,7 @@ namespace ModularAvatarAsCode.V0
             return CreateForGroup<bool, AacFlFloatParameter>(aacParameterGroup.ToList(), ParameterSyncType.Bool);
         }
 
-        private MaacParameter<U> CreateForGroup<U, T>(List<T> groupAsList, ParameterSyncType parameterSyncType) where T : AacFlParameter
+        private MaacParameter<TParamType> CreateForGroup<TParamType, TParam>(List<TParam> groupAsList, ParameterSyncType parameterSyncType) where TParam : AacFlParameter
         {
             var parameter = EnsureParamComponentCreated();
 
@@ -157,12 +156,12 @@ namespace ModularAvatarAsCode.V0
                 });
             }
 
-            return new MaacParameter<U>(parameter, Enumerable.Range(firstIndex, groupAsList.Count).ToArray());
+            return new MaacParameter<TParamType>(parameter, Enumerable.Range(firstIndex, groupAsList.Count).ToArray());
         }
 
         private ModularAvatarParameters EnsureParamComponentCreated()
         {
-            var parameter = _root.GetOrAddComponent<ModularAvatarParameters>();
+            var parameter = GetOrAddComponent<ModularAvatarParameters>(_root);
             if (!paramsCreated)
             {
                 parameter.parameters = new List<ParameterConfig>();
@@ -179,7 +178,7 @@ namespace ModularAvatarAsCode.V0
 
         public MaacMenuItem EditMenuItem(GameObject receiver)
         {
-            var menuItem = receiver.GetOrAddComponent<ModularAvatarMenuItem>();
+            var menuItem = GetOrAddComponent<ModularAvatarMenuItem>(receiver);
             return new MaacMenuItem(new [] { menuItem });
         }
 
@@ -187,13 +186,19 @@ namespace ModularAvatarAsCode.V0
         {
             var menuItems = receivers
                 // Warning: Mutating function inside LINQ
-                .Select(receiver => receiver.GetOrAddComponent<ModularAvatarMenuItem>())
+                .Select(receiver => GetOrAddComponent<ModularAvatarMenuItem>(receiver))
                 .ToArray();
             return new MaacMenuItem(menuItems);
         }
+
+        private static T GetOrAddComponent<T>(GameObject go) where T : Component
+        {
+            var result = go.GetComponent<T>();
+            return result != null ? result : go.AddComponent<T>();
+        }
     }
 
-    internal class MaacMenuItem
+    public class MaacMenuItem
     {
         private readonly ModularAvatarMenuItem[] menuItems;
 
@@ -377,7 +382,7 @@ namespace ModularAvatarAsCode.V0
         }
     }
 
-    internal class MaacParameter<T>
+    public class MaacParameter<T>
     {
         private readonly ModularAvatarParameters parameter;
         private readonly int[] indices;
@@ -438,4 +443,3 @@ namespace ModularAvatarAsCode.V0
         }
     }
 }
-#endif

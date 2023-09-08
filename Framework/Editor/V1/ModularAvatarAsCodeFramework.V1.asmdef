@@ -1,0 +1,21 @@
+﻿{
+	"name": "ModularAvatarAsCode.V1",
+	"references": [
+		"GUID:7b32145194168e0409534fc5052b85ce",
+		"GUID:fc900867c0f47cd49b6e2ae4ef907300"
+	],
+	"includePlatforms": [
+		"Editor"
+	],
+	"excludePlatforms": [],
+	"allowUnsafeCode": false,
+	"overrideReferences": true,
+	"precompiledReferences": [
+		"VRCSDKBase.dll",
+		"VRCSDK3A.dll"
+	],
+	"autoReferenced": true,
+	"defineConstraints": [],
+	"versionDefines": [],
+	"noEngineReferences": false
+}
