@@ -35,6 +35,7 @@ namespace ModularAvatarAsCode.V1
             return new MaAc(otherRoot);
         }
 
+        /// Import parameters from an existing VRCExpressionParameters asset
         public void ImportParameters(VRCExpressionParameters parameters)
         {
             foreach (var param in parameters.parameters)
