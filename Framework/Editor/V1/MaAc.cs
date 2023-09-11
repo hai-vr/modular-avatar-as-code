@@ -23,6 +23,7 @@ namespace ModularAvatarAsCode.V1
             _root = root;
         }
 
+        /// Create a Modular Avatar As Code base, targeting the root object. The root object is the object that you will attach the Merge Armature component to.
         public static MaAc Create(GameObject root, bool setDirty = true)
         {
             if (setDirty) EditorUtility.SetDirty(root);
@@ -35,8 +36,8 @@ namespace ModularAvatarAsCode.V1
             return new MaAc(otherRoot);
         }
 
-        /// Import parameters from an existing VRCExpressionParameters asset
-        public void ImportParameters(VRCExpressionParameters parameters)
+        /// Import parameters from an existing VRCExpressionParameters asset.
+        public MaAc ImportParameters(VRCExpressionParameters parameters)
         {
             foreach (var param in parameters.parameters)
             {
@@ -50,6 +51,8 @@ namespace ModularAvatarAsCode.V1
                     defaultValue = param.defaultValue
                 });
             }
+
+            return this;
         }
 
         private ParameterSyncType SyncType(VRCExpressionParameters.ValueType parameterValueType)
@@ -70,12 +73,14 @@ namespace ModularAvatarAsCode.V1
             var parameter = CreateParameter(aacParameter.Name, ParameterSyncType.Float, out var index);
             return new MaacParameter<float>(parameter, new [] { index });
         }
+        
         /// Declare a new Int parameter, by default saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist.
         public MaacParameter<int> NewParameter(AacFlIntParameter aacParameter)
         {
             var parameter = CreateParameter(aacParameter.Name, ParameterSyncType.Int, out var index);
             return new MaacParameter<int>(parameter, new [] { index });
         }
+        
         /// Declare a new Bool parameter, by default saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist.
         public MaacParameter<bool> NewParameter(AacFlBoolParameter aacParameter)
         {
@@ -110,6 +115,7 @@ namespace ModularAvatarAsCode.V1
             return NewMergeAnimator(controller.AnimatorController, layerType);
         }
 
+        /// Declare a new raw animator to be merged. Every call to NewMergeAnimator will create a new ModularAvatarMergeAnimator, as long as this instance of MaAc is reused.
         public ModularAvatarMergeAnimator NewMergeAnimator(AnimatorController animator, VRCAvatarDescriptor.AnimLayerType layerType)
         {
             ModularAvatarMergeAnimator mergeAnimator;
@@ -181,18 +187,21 @@ namespace ModularAvatarAsCode.V1
             return parameter;
         }
 
+        /// Edit one menu item on this object. It is not possible to declare multiple menu items on the same object.
         public MaacMenuItem EditMenuItemOnSelf()
         {
             return EditMenuItem(_root);
         }
 
+        /// Edit one menu item on the receiver object. It is not possible to declare multiple menu items on that same object.
         public MaacMenuItem EditMenuItem(GameObject receiver)
         {
             var menuItem = GetOrAddComponent<ModularAvatarMenuItem>(receiver);
             return new MaacMenuItem(new [] { menuItem });
         }
 
-        public MaacMenuItem EditMenuItem(GameObject[] receivers)
+        /// Edit one menu item on all of the receiver objects. It is not possible to declare multiple menu items on those same objects. Function calls on the resulting objects will affect all parameters of that group. Use this in case you have multiple identical menu items scattered across different menus.
+        public MaacMenuItem EditMenuItem(params GameObject[] receivers)
         {
             var menuItems = receivers
                 // Warning: Mutating function inside LINQ
@@ -217,6 +226,7 @@ namespace ModularAvatarAsCode.V1
             this.menuItems = menuItems;
         }
 
+        /// Set the menu item type as Toggle.
         public MaacMenuItem Toggle(AacFlBoolParameter parameter)
         {
             EditControlWithParameter(parameter, control =>
@@ -265,28 +275,6 @@ namespace ModularAvatarAsCode.V1
             return this;
         }
 
-        public MaacMenuItem ButtonSets(AacFlIntParameter parameter, int value)
-        {
-            EditControlWithParameter(parameter, control =>
-            {
-                control.type = VRCExpressionsMenu.Control.ControlType.Button;
-                control.value = value;
-                return control;
-            });
-            return this;
-        }
-
-        public MaacMenuItem ButtonSets(AacFlFloatParameter parameter, float value)
-        {
-            EditControlWithParameter(parameter, control =>
-            {
-                control.type = VRCExpressionsMenu.Control.ControlType.Button;
-                control.value = value;
-                return control;
-            });
-            return this;
-        }
-
         public MaacMenuItem ToggleSets(AacFlIntParameter parameter, int value)
         {
             EditControlWithParameter(parameter, control =>
@@ -309,12 +297,23 @@ namespace ModularAvatarAsCode.V1
             return this;
         }
 
-        public MaacMenuItem ButtonForcesBoolToFalse(AacFlBoolParameter parameter)
+        public MaacMenuItem ButtonSets(AacFlIntParameter parameter, int value)
         {
             EditControlWithParameter(parameter, control =>
             {
                 control.type = VRCExpressionsMenu.Control.ControlType.Button;
-                control.value = 0;
+                control.value = value;
+                return control;
+            });
+            return this;
+        }
+
+        public MaacMenuItem ButtonSets(AacFlFloatParameter parameter, float value)
+        {
+            EditControlWithParameter(parameter, control =>
+            {
+                control.type = VRCExpressionsMenu.Control.ControlType.Button;
+                control.value = value;
                 return control;
             });
             return this;
@@ -325,6 +324,17 @@ namespace ModularAvatarAsCode.V1
             EditControlWithParameter(parameter, control =>
             {
                 control.type = VRCExpressionsMenu.Control.ControlType.Toggle;
+                control.value = 0;
+                return control;
+            });
+            return this;
+        }
+
+        public MaacMenuItem ButtonForcesBoolToFalse(AacFlBoolParameter parameter)
+        {
+            EditControlWithParameter(parameter, control =>
+            {
+                control.type = VRCExpressionsMenu.Control.ControlType.Button;
                 control.value = 0;
                 return control;
             });
@@ -403,6 +413,7 @@ namespace ModularAvatarAsCode.V1
             this.indices = indices;
         }
 
+        /// Mark this parameter as not synced. By default, newly created parameters are synced.
         public MaacParameter<T> NotSynced()
         {
             EditParameter(config =>
@@ -413,6 +424,7 @@ namespace ModularAvatarAsCode.V1
             return this;
         }
 
+        /// Mark this parameter as not saved. By default, newly created parameters are saved.
         public MaacParameter<T> NotSaved()
         {
             EditParameter(config =>
@@ -423,6 +435,7 @@ namespace ModularAvatarAsCode.V1
             return this;
         }
 
+        /// Set the default value of this parameter. No errors are raised if you try to set values outside legal range.
         public MaacParameter<T> WithDefaultValue(T value)
         {
             var defaultValue = ConvertValue(value);
