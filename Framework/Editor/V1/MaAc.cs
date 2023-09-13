@@ -205,6 +205,7 @@ namespace ModularAvatarAsCode.V1
         {
             var menuItems = receivers
                 // Warning: Mutating function inside LINQ
+                .Where(o => o != null)
                 .Select(receiver => GetOrAddComponent<ModularAvatarMenuItem>(receiver))
                 .ToArray();
             return new MaacMenuItem(menuItems);
