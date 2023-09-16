@@ -109,14 +109,14 @@ namespace ModularAvatarAsCode.V1
             return parameter;
         }
 
-        /// Declare a new animator to be merged. Every call to NewMergeAnimator will create a new ModularAvatarMergeAnimator, as long as this instance of MaAc is reused.
-        public ModularAvatarMergeAnimator NewMergeAnimator(AacFlController controller, VRCAvatarDescriptor.AnimLayerType layerType)
+        /// Declare a new animator to be merged. Every call to NewMergeAnimator will create a new ModularAvatarMergeAnimator, as long as this instance of MaAc is reused. The path mode is set to Absolute.
+        public MaacMergeAnimator NewMergeAnimator(AacFlController controller, VRCAvatarDescriptor.AnimLayerType layerType)
         {
             return NewMergeAnimator(controller.AnimatorController, layerType);
         }
 
-        /// Declare a new raw animator to be merged. Every call to NewMergeAnimator will create a new ModularAvatarMergeAnimator, as long as this instance of MaAc is reused.
-        public ModularAvatarMergeAnimator NewMergeAnimator(AnimatorController animator, VRCAvatarDescriptor.AnimLayerType layerType)
+        /// Declare a new raw animator to be merged. Every call to NewMergeAnimator will create a new ModularAvatarMergeAnimator, as long as this instance of MaAc is reused. The path mode is set to Absolute.
+        public MaacMergeAnimator NewMergeAnimator(AnimatorController animator, VRCAvatarDescriptor.AnimLayerType layerType)
         {
             ModularAvatarMergeAnimator mergeAnimator;
             
@@ -135,7 +135,23 @@ namespace ModularAvatarAsCode.V1
             mergeAnimator.animator = animator;
             mergeAnimator.layerType = layerType;
             mergeAnimator.pathMode = MergeAnimatorPathMode.Absolute;
-            return mergeAnimator;
+            return new MaacMergeAnimator(mergeAnimator);
+        }
+
+        /// Writes over an existing MergeAnimator component, setting the controller and layer type to be merged. The path mode is set to Absolute.
+        public MaacMergeAnimator UsingMergeAnimator(ModularAvatarMergeAnimator mergeAnimator, AacFlController controller, VRCAvatarDescriptor.AnimLayerType layerType)
+        {
+            var animator = controller.AnimatorController;
+            return UsingMergeAnimator(mergeAnimator, animator, layerType);
+        }
+
+        /// Writes over an existing MergeAnimator component, setting the raw controller and layer type to be merged. The path mode is set to Absolute.
+        public MaacMergeAnimator UsingMergeAnimator(ModularAvatarMergeAnimator mergeAnimator, AnimatorController animator, VRCAvatarDescriptor.AnimLayerType layerType)
+        {
+            mergeAnimator.animator = animator;
+            mergeAnimator.layerType = layerType;
+            mergeAnimator.pathMode = MergeAnimatorPathMode.Absolute;
+            return new MaacMergeAnimator(mergeAnimator);
         }
 
         public MaacParameter<int> NewParameter(AacFlIntParameterGroup aacParameterGroup)
@@ -201,9 +217,9 @@ namespace ModularAvatarAsCode.V1
         }
 
         /// Edit one menu item on all of the receiver objects. It is not possible to declare multiple menu items on those same objects. Function calls on the resulting objects will affect all parameters of that group. Use this in case you have multiple identical menu items scattered across different menus.
-        public MaacMenuItem EditMenuItem(params GameObject[] receivers)
+        public MaacMenuItem EditMenuItem(params GameObject[] receiversWithNulls)
         {
-            var menuItems = receivers
+            var menuItems = receiversWithNulls
                 // Warning: Mutating function inside LINQ
                 .Where(o => o != null)
                 .Select(receiver => GetOrAddComponent<ModularAvatarMenuItem>(receiver))
@@ -215,6 +231,23 @@ namespace ModularAvatarAsCode.V1
         {
             var result = go.GetComponent<T>();
             return result != null ? result : go.AddComponent<T>();
+        }
+    }
+
+    public class MaacMergeAnimator
+    {
+        private readonly ModularAvatarMergeAnimator mergeAnimator;
+
+        public MaacMergeAnimator(ModularAvatarMergeAnimator mergeAnimator)
+        {
+            this.mergeAnimator = mergeAnimator;
+        }
+
+        /// Mark the path mode as relative. By default, merge animators are made absolute.
+        public MaacMergeAnimator Relative()
+        {
+            mergeAnimator.pathMode = MergeAnimatorPathMode.Relative;
+            return this;
         }
     }
 
