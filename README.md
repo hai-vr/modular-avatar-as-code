@@ -1,5 +1,21 @@
-ModularAvatarAsCode
-====
+Animator As Code - Modular Avatar
+=====
+
+Modular Avatar As Code contains facilities to automate the creation of Modular Avatar components.
+
+The functionality of this library is strictly limited to the handling of animators and parameters.
+
+## Installation
+
+Install using the VRChat Creator Companion. Instructions are available in [this page](https://docs.hai-vr.dev/docs/products/animator-as-code/install).
+
+## Documentation
+
+- The documentation is available at [docs.hai-vr.dev](https://docs.hai-vr.dev/docs/products/animator-as-code/functions/modular-avatar).
+
+-----
+
+## Work in progress
 
 Haï speaking: ModularAvatarAsCode is a companion library to AnimatorAsCode V1 that I am using in my personal avatar project to generate animator controllers non-destructively, and then declare the animator, its parameters, and the menu items to Modular Avatar.
 
