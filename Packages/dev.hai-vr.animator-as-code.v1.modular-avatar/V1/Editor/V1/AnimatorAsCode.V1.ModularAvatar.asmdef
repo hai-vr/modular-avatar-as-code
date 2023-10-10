@@ -1,5 +1,5 @@
 ﻿{
-	"name": "ModularAvatarAsCode.V1",
+	"name": "AnimatorAsCode.V1.ModularAvatar",
 	"references": [
 		"GUID:fc900867c0f47cd49b6e2ae4ef907300",
 		"AnimatorAsCode.V1"

@@ -9,7 +9,7 @@ using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 using VRC.SDK3.Avatars.ScriptableObjects;
 
-namespace ModularAvatarAsCode.V1
+namespace AnimatorAsCode.V1.ModularAvatar
 {
     public class MaAc
     {
