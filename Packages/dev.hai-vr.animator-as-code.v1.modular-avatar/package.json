@@ -1,7 +1,7 @@
 {
   "name": "dev.hai-vr.animator-as-code.v1.modular-avatar",
   "displayName": "Animator As Code - Modular Avatar (Alpha)",
-  "version": "1.0.9911",
+  "version": "1.0.9920",
   "unity": "2019.4",
   "description": "Companion library to create Modular Avatar components.",
   "vrchatVersion" : "2022.1.1",
