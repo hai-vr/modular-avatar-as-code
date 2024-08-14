@@ -11,7 +11,7 @@
   "vpmDependencies": {
     "dev.hai-vr.animator-as-code.v1": ">=1.1.0-beta.1 <1.2.0-a",
     "nadena.dev.modular-avatar": ">=1.9.9 <2.0.0-a",
-    "com.vrchat.avatars": ">=3.5.2 <3.7.0-a"
+    "com.vrchat.avatars": ">=3.5.2 <3.8.0-a"
   },
   "url" : "https://docs.hai-vr.dev/docs/products/animator-as-code/functions/modular-avatar",
   "documentationUrl": "https://docs.hai-vr.dev/docs/products/animator-as-code/functions/modular-avatar",
