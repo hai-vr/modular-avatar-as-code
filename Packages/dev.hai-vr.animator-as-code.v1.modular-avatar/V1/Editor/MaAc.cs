@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AnimatorAsCode.V1;
 using nadena.dev.modular_avatar.core;
 using UnityEditor;
 using UnityEditor.Animations;
@@ -42,9 +41,9 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return new MaAc(otherRoot);
         }
 
-        /// Create a dummy Modular Avatar As Code base that doesn't create or modify anything when you call any of its methods.
-        /// - Calling the methods still return the appropriate objects.
-        /// - Accessing fields will return null!!!
+        /// Create a dummy Modular Avatar As Code base that doesn't create or modify anything when you call any of its methods.<br/>
+        /// - If you need to disable the creation of Modular Avatar components without heavily modifying the code, use this.<br/>
+        /// - Calling the methods will still return appropriate objects that do nothing.
         public static MaAc Dummy()
         {
             return new MaAc(null, true);
@@ -186,6 +185,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return new MaacMergeAnimator(mergeAnimator);
         }
 
+        /// Declare new Int parameters, by default saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist. Function calls on the resulting objects will affect all parameters of that group. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist.
         public MaacParameter<int> NewParameter(AacFlIntParameterGroup aacParameterGroup)
         {
             if (_isDummy) return MaacParameter<int>.Dummy();
@@ -193,6 +193,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return CreateForGroup<int, AacFlIntParameter>(aacParameterGroup.ToList(), ParameterSyncType.Int);
         }
 
+        /// Declare new Float parameters, by default saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist. Function calls on the resulting objects will affect all parameters of that group.
         public MaacParameter<float> NewParameter(AacFlFloatParameterGroup aacParameterGroup)
         {
             if (_isDummy) return MaacParameter<float>.Dummy();
@@ -200,6 +201,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return CreateForGroup<float, AacFlFloatParameter>(aacParameterGroup.ToList(), ParameterSyncType.Float);
         }
 
+        /// Declare new Bool parameters, by default saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist. Function calls on the resulting objects will affect all parameters of that group.
         public MaacParameter<bool> NewParameter(AacFlBoolParameterGroup aacParameterGroup)
         {
             if (_isDummy) return MaacParameter<bool>.Dummy();
@@ -207,6 +209,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return CreateForGroup<bool, AacFlBoolParameter>(aacParameterGroup.ToList(), ParameterSyncType.Bool);
         }
 
+        /// Declare new Bool parameters, acknowledging that the animator has exposed them as Floats. By default it is saved and synced. This creates a ModularAvatarParameters on the targeted object if it doesn't already exist. Function calls on the resulting objects will affect all parameters of that group.
         public MaacParameter<bool> NewBoolToFloatParameter(AacFlFloatParameterGroup aacParameterGroup)
         {
             if (_isDummy) return MaacParameter<bool>.Dummy();
@@ -260,7 +263,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return new MaacMenuItem(new [] { menuItem });
         }
 
-        /// Edit one menu item on all of the receiver objects. It is not possible to declare multiple menu items on those same objects. Function calls on the resulting objects will affect all of those menu items. Use this in case you have multiple identical menu items scattered across different menus. The array can safely contain null values.
+        /// Edit one menu item on all the receiver objects. It is not possible to declare multiple menu items on those same objects. Function calls on the resulting objects will affect all of those menu items. Use this in case you have multiple identical menu items scattered across different menus. The array can safely contain null values.
         public MaacMenuItem EditMenuItem(params GameObject[] receiversWithNulls)
         {
             if (_isDummy) return MaacMenuItem.Dummy();
@@ -343,6 +346,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Button for a Bool parameter.
         public MaacMenuItem Button(AacFlBoolParameter parameter)
         {
             EditControlWithParameter(parameter, control =>
@@ -355,6 +359,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Toggle for a Bool parameter, which is exposed as a Float in the animator.
         public MaacMenuItem ToggleBoolToFloat(AacFlFloatParameter parameter)
         {
             EditControlWithParameter(parameter, control =>
@@ -367,6 +372,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Button for a Bool parameter, which is exposed as a Float in the animator.
         public MaacMenuItem ButtonBoolToFloat(AacFlFloatParameter parameter)
         {
             EditControlWithParameter(parameter, control =>
@@ -379,6 +385,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Toggle for a Int parameter, setting the value when toggled.
         public MaacMenuItem ToggleSets(AacFlIntParameter parameter, int value)
         {
             EditControlWithParameter(parameter, control =>
@@ -390,6 +397,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Toggle for a Float parameter, setting the value when toggled.
         public MaacMenuItem ToggleSets(AacFlFloatParameter parameter, float value)
         {
             EditControlWithParameter(parameter, control =>
@@ -401,6 +409,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Button for a Int parameter, setting the value when pressed.
         public MaacMenuItem ButtonSets(AacFlIntParameter parameter, int value)
         {
             EditControlWithParameter(parameter, control =>
@@ -412,6 +421,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Button for a Float parameter, setting the value when pressed.
         public MaacMenuItem ButtonSets(AacFlFloatParameter parameter, float value)
         {
             EditControlWithParameter(parameter, control =>
@@ -423,6 +433,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Toggle for a Bool parameter. However, when toggled, the value of the bool will be forced to false. Toggling will never set the value to true.
         public MaacMenuItem ToggleForcesBoolToFalse(AacFlBoolParameter parameter)
         {
             EditControlWithParameter(parameter, control =>
@@ -434,6 +445,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Button for a Bool parameter. However, when pressed, the value of the bool will be forced to false. Pressing will never set the value to true.
         public MaacMenuItem ButtonForcesBoolToFalse(AacFlBoolParameter parameter)
         {
             EditControlWithParameter(parameter, control =>
@@ -445,6 +457,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
         
+        /// Set the menu item name to be displayed on the menu.
         public MaacMenuItem Name(string menuItemName)
         {
             if (_isDummy) return this;
@@ -457,6 +470,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item type as Radial for a Float parameter.
         public MaacMenuItem Radial(AacFlFloatParameter floatParam)
         {
             EditControlWithParameter(null, control =>
@@ -474,6 +488,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
             return this;
         }
 
+        /// Set the menu item icon.
         public MaacMenuItem WithIcon(Texture2D icon)
         {
             EditControl(control =>
