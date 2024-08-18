@@ -288,7 +288,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
         private readonly ModularAvatarMergeAnimator mergeAnimator;
         private readonly bool _isDummy;
 
-        public MaacMergeAnimator(ModularAvatarMergeAnimator mergeAnimator)
+        internal MaacMergeAnimator(ModularAvatarMergeAnimator mergeAnimator)
         {
             this.mergeAnimator = mergeAnimator;
         }
@@ -318,7 +318,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
         private readonly ModularAvatarMenuItem[] menuItems;
         private readonly bool _isDummy;
 
-        public MaacMenuItem(ModularAvatarMenuItem[] menuItems)
+        internal MaacMenuItem(ModularAvatarMenuItem[] menuItems)
         {
             this.menuItems = menuItems;
         }
@@ -533,7 +533,7 @@ namespace AnimatorAsCode.V1.ModularAvatar
         private readonly int[] indices;
         private readonly bool _isDummy;
 
-        public MaacParameter(ModularAvatarParameters parameter, int[] indices)
+        internal MaacParameter(ModularAvatarParameters parameter, int[] indices)
         {
             this.parameter = parameter;
             this.indices = indices;
